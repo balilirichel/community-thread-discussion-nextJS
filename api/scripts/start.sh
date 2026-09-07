@@ -20,5 +20,8 @@ echo "Indexing Typesense..."
 # php artisan scout:import 'App\Models\Thread'
 php artisan typesense:reindex
 
+echo "Ingesting knowledgebase PDF into vector store..."
+php artisan pdf:ingest Knowledgebased.pdf || echo "WARNING: PDF ingestion failed — chat will fall back to KB-only"
+
 echo "Done!"
 wait
