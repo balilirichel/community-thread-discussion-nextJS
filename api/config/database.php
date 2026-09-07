@@ -100,6 +100,26 @@ return [
             'sslmode' => env('DB_SSLMODE', 'prefer'),
         ],
 
+        'supabase' => [
+            // Supabase is a hosted Postgres database with the pgvector
+            // extension — NOT a dedicated vector service. We therefore treat it
+            // as an ordinary pgsql connection: standard Laravel/PDO over the
+            // Supabase pooler URL, plus the pgvector vector column and the
+            // `<=>` cosine operator used in VectorStoreService.
+            'driver' => 'pgsql',
+            'url' => env('SUPABASE_DB_URL'),
+            'host' => env('SUPABASE_DB_HOST', 'localhost'),
+            'port' => env('SUPABASE_DB_PORT', '5432'),
+            'database' => env('SUPABASE_DB_DATABASE', 'postgres'),
+            'username' => env('SUPABASE_DB_USERNAME', 'postgres'),
+            'password' => env('SUPABASE_DB_PASSWORD', ''),
+            'charset' => env('SUPABASE_DB_CHARSET', 'utf8'),
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'search_path' => 'public',
+            'sslmode' => env('SUPABASE_DB_SSLMODE', 'require'),
+        ],
+
         'sqlsrv' => [
             'driver' => 'sqlsrv',
             'url' => env('DB_URL'),

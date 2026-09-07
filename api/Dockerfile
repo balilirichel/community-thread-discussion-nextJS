@@ -5,7 +5,7 @@ RUN apt-get update && apt-get install -y \
     git curl zip unzip \
     libpng-dev libonig-dev libxml2-dev libzip-dev libicu-dev libpq-dev \
     supervisor \
-    && docker-php-ext-install pdo pdo_mysql mbstring zip exif pcntl gd intl \
+    && docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring zip exif pcntl gd intl \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

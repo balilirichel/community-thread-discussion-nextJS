@@ -13,13 +13,13 @@ use Illuminate\Support\Str;
 
 class ChatService
 {
-    private ChromaDBService $chromaDb;
+    private VectorStoreService $vectorStore;
 
     private EmbeddingService $embedding;
 
-    public function __construct(ChromaDBService $chromaDb, EmbeddingService $embedding)
+    public function __construct(VectorStoreService $vectorStore, EmbeddingService $embedding)
     {
-        $this->chromaDb = $chromaDb;
+        $this->vectorStore = $vectorStore;
         $this->embedding = $embedding;
     }
 
@@ -85,7 +85,6 @@ PROMPT;
         $kbEntries = $this->retrieveRelevantEntries($message);
         $pdfChunks = $this->retrievePdfChunks($message);
 
-      
         if ($kbEntries->isEmpty() && empty($pdfChunks)) {
             $reply = $this->buildOffTopicReply();
 
@@ -165,7 +164,7 @@ PROMPT;
     }
 
     /**
-     * Retrieve relevant PDF chunks from ChromaDB via semantic search.
+     * Retrieve relevant PDF chunks from the vector store via semantic search.
      * Returns an empty array on any failure (graceful degradation).
      *
      * @return array<string>
@@ -179,23 +178,9 @@ PROMPT;
                 return [];
             }
 
-            $collectionId = $this->chromaDb->getOrCreateCollection(
-                config('pdf-ingestion.collection', 'pdf_documents'),
-            );
-
-            if ($collectionId === null) {
-                return [];
-            }
-
             $topK = (int) config('pdf-ingestion.top_k', 5);
 
-            $results = $this->chromaDb->queryCollection($collectionId, $queryEmbedding, $topK);
-
-            if ($results === null || empty($results['documents'][0])) {
-                return [];
-            }
-
-            return $results['documents'][0];
+            return $this->vectorStore->queryRelevant($queryEmbedding, $topK);
         } catch (\Exception $e) {
             Log::warning('PDF chunk retrieval failed, falling back to DB-only', [
                 'message' => $e->getMessage(),

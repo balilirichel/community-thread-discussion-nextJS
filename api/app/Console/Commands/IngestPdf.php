@@ -12,7 +12,7 @@ class IngestPdf extends Command
                             {path : Path to PDF file (absolute or relative to storage/app/public/knowledgebase)}
                             {--delete : Delete existing chunks for this file before re-ingesting}';
 
-    protected $description = 'Ingest a PDF file into ChromaDB for semantic search';
+    protected $description = 'Ingest a PDF file into the vector store for semantic search';
 
     public function handle(PdfIngestionService $ingestion): int
     {

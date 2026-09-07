@@ -13,12 +13,15 @@ class EmbeddingService
 
     private string $model;
 
+    private int $dimensions;
+
     private int $timeout = 15;
 
     public function __construct()
     {
         $this->apiKey = config('services.gemini.api_key', '');
         $this->model = config('services.gemini.embedding_model', 'text-embedding-004');
+        $this->dimensions = (int) config('services.gemini.embedding_dimensions', 768);
     }
 
     /**
@@ -92,6 +95,7 @@ class EmbeddingService
                         ],
                     ],
                     'taskType' => $taskType,
+                    'outputDimensionality' => $this->dimensions,
                 ]);
 
             if ($response->failed()) {
@@ -103,7 +107,16 @@ class EmbeddingService
                 return null;
             }
 
-            return $response->json('embedding.values');
+            $values = $response->json('embedding.values');
+
+            if (! is_array($values)) {
+                return null;
+            }
+
+            // gemini-embedding-001 does NOT auto-normalize truncated
+            // (<3072) vectors, so we normalize manually to keep cosine
+            // distance semantics correct.
+            return $this->normalize($values);
         } catch (\Exception $e) {
             Log::error('Gemini embedContent exception', [
                 'message' => $e->getMessage(),
@@ -142,6 +155,7 @@ class EmbeddingService
                 ->withHeaders(['Content-Type' => 'application/json'])
                 ->post($url, [
                     'requests' => $requests,
+                    'outputDimensionality' => $this->dimensions,
                 ]);
 
             if ($response->failed()) {
@@ -155,7 +169,7 @@ class EmbeddingService
 
             $embeddings = $response->json('embeddings');
 
-            return array_map(fn ($e) => $e['values'], $embeddings);
+            return array_map(fn ($e) => $this->normalize($e['values']), $embeddings);
         } catch (\Exception $e) {
             Log::error('Gemini batchEmbedContents exception', [
                 'message' => $e->getMessage(),
@@ -163,5 +177,26 @@ class EmbeddingService
 
             return null;
         }
+    }
+
+    /**
+     * L2-normalize a vector so cosine distance equals Euclidean distance on
+     * the unit sphere. Required because gemini-embedding-001 does not
+     * auto-normalize truncated (<3072) embeddings.
+     *
+     * @param  array<mixed>  $values
+     * @return array<float>|null
+     */
+    private function normalize(array $values): ?array
+    {
+        $vector = array_map(fn ($v) => (float) $v, $values);
+
+        $norm = sqrt(array_sum(array_map(fn ($v) => $v * $v, $vector)));
+
+        if ($norm <= 0.0) {
+            return null;
+        }
+
+        return array_map(fn ($v) => $v / $norm, $vector);
     }
 }

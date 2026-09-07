@@ -7,18 +7,18 @@ use Smalot\PdfParser\Parser;
 
 class PdfIngestionService
 {
-    private ChromaDBService $chromaDb;
+    private VectorStoreService $vectorStore;
 
     private EmbeddingService $embedding;
 
-    public function __construct(ChromaDBService $chromaDb, EmbeddingService $embedding)
+    public function __construct(VectorStoreService $vectorStore, EmbeddingService $embedding)
     {
-        $this->chromaDb = $chromaDb;
+        $this->vectorStore = $vectorStore;
         $this->embedding = $embedding;
     }
 
     /**
-     * Ingest a PDF file into ChromaDB.
+     * Ingest a PDF file into the vector store.
      *
      * Steps: extract text per page → chunk → embed → store.
      * Returns a summary array with counts, or throws on critical failure.
@@ -34,14 +34,6 @@ class PdfIngestionService
         }
 
         $filename = basename($pdfPath);
-
-        $collectionId = $this->chromaDb->getOrCreateCollection(
-            config('pdf-ingestion.collection', 'pdf_documents'),
-        );
-
-        if ($collectionId === null) {
-            throw new \RuntimeException('Could not connect to ChromaDB. Is the server running?');
-        }
 
         $parser = new Parser;
         $pdf = $parser->parseFile($pdfPath);
@@ -92,16 +84,15 @@ class PdfIngestionService
             );
         }
 
-        $added = $this->chromaDb->addDocuments(
-            $collectionId,
+        $stored = $this->vectorStore->storeDocuments(
             $allIds,
-            $embeddings,
             $allChunks,
+            $embeddings,
             $allMetadatas,
         );
 
-        if (! $added) {
-            throw new \RuntimeException('Failed to store PDF chunks in ChromaDB.');
+        if (! $stored) {
+            throw new \RuntimeException('Failed to store PDF chunks in the vector store.');
         }
 
         Log::info('PDF ingested successfully', [
@@ -122,17 +113,7 @@ class PdfIngestionService
      */
     public function deleteByFilename(string $filename): bool
     {
-        $collectionId = $this->chromaDb->getOrCreateCollection(
-            config('pdf-ingestion.collection', 'pdf_documents'),
-        );
-
-        if ($collectionId === null) {
-            return false;
-        }
-
-        return $this->chromaDb->deleteByMetadata($collectionId, [
-            'source' => $filename,
-        ]);
+        return $this->vectorStore->deleteBySource($filename);
     }
 
     /**

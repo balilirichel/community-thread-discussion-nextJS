@@ -4,14 +4,44 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Collection
+    | Vector Store Connection
     |--------------------------------------------------------------------------
     |
-    | The ChromaDB collection used to store PDF document chunks.
+    | The database connection that holds the pgvector `document_embeddings`
+    | table. In production this is the `supabase` connection defined in
+    | config/database.php. Injecting the name here (rather than hard-coding)
+    | keeps the rest of the code swap-friendly.
     |
     */
 
-    'collection' => env('CHROMADB_COLLECTION', 'pdf_documents'),
+    'connection' => env('VECTOR_STORE_CONNECTION', 'supabase'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Embedding Dimensions
+    |--------------------------------------------------------------------------
+    |
+    | Dimensionality of the Gemini embeddings produced by EmbeddingService
+    | (outputDimensionality=768). Must match the `vector(N)` column and the
+    | index operator class used in the migration. Keep in sync with
+    | config/services.php.gemini.embedding_dimensions.
+    |
+    */
+
+    'vector_dimensions' => (int) env('VECTOR_DIMENSIONS', 768),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Collection
+    |--------------------------------------------------------------------------
+    |
+    | Retained for compatibility: the pgvector table effectively replaces the
+    | ChromaDB collection. Used by the migration name when running on the
+    | non-default connection.
+    |
+    */
+
+    'collection' => env('VECTOR_STORE_COLLECTION', 'document_embeddings'),
 
     /*
     |--------------------------------------------------------------------------
@@ -23,7 +53,7 @@ return [
     |
     */
 
-    'top_k' => (int) env('CHROMADB_TOP_K', 5),
+    'top_k' => (int) env('VECTOR_TOP_K', 5),
 
     /*
     |--------------------------------------------------------------------------
@@ -36,8 +66,8 @@ return [
     |
     */
 
-    'chunk_size' => (int) env('CHROMADB_CHUNK_SIZE', 500),
+    'chunk_size' => (int) env('VECTOR_CHUNK_SIZE', 500),
 
-    'chunk_overlap' => (int) env('CHROMADB_CHUNK_OVERLAP', 50),
+    'chunk_overlap' => (int) env('VECTOR_CHUNK_OVERLAP', 50),
 
 ];

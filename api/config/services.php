@@ -39,6 +39,10 @@ return [
         'api_key' => env('GEMINI_API_KEY'),
         'platform_name' => env('PLATFORM_NAME', 'this platform'),
         'embedding_model' => env('GEMINI_EMBEDDING_MODEL', 'gemini-embedding-001'),
+        // outputDimensionality for embed calls. Kept at 768 so the vectors fit
+        // pgvector's indexable dimension limits and Supabase's storage/RAM.
+        // Must match config('pdf-ingestion.vector_dimensions') and the DDL.
+        'embedding_dimensions' => (int) env('GEMINI_EMBEDDING_DIMENSIONS', 768),
     ],
 
     'make' => [
