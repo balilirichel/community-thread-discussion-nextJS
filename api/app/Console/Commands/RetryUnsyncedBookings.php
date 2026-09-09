@@ -47,6 +47,7 @@ class RetryUnsyncedBookings extends Command
                     'time' => $booking->time,
                     'topic' => $booking->topic,
                     'status' => $booking->status,
+                    'created_at' => $booking->created_at->toISOString(),
                 ]);
 
                 if ($response->successful()) {

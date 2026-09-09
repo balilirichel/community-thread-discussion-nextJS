@@ -125,7 +125,7 @@ const ThreadPage: React.FC = () => {
                 <Leaf size={24} color="#118451" />
               </div>
               <h3 className="text-lg font-bold text-gray-700 mb-1">Searching threads…</h3>
-              <p className="text-sm text-gray-400">Querying Typesense for matching threads.</p>
+    
             </div>
           ) : threadResults.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-center">

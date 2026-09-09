@@ -327,6 +327,7 @@ PROMPT;
                 'time' => $booking->time,
                 'topic' => $booking->topic,
                 'status' => $booking->status,
+                'created_at' => $booking->created_at->toISOString(),
             ]);
         } catch (\Exception $e) {
             Log::error('Make.com webhook failed for booking '.$booking->id, [
