@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -21,7 +22,18 @@ return new class extends Migration
     {
         $connection = config('pdf-ingestion.connection', DB::getDefaultConnection());
 
-        DB::connection($connection)->statement('CREATE EXTENSION IF NOT EXISTS vector');
+        // Enable the pgvector extension. On Supabase this should already be
+        // enabled via the dashboard (Database → Extensions → "vector").
+        // The IF NOT EXISTS is a safety net; the try/catch handles the case
+        // where Supabase's transaction-mode pooler (port 6543) doesn't
+        // support CREATE EXTENSION — the extension is already global.
+        try {
+            DB::connection($connection)->statement('CREATE EXTENSION IF NOT EXISTS vector');
+        } catch (Exception $e) {
+            Log::info('CREATE EXTENSION vector skipped (likely already enabled)', [
+                'error' => $e->getMessage(),
+            ]);
+        }
 
         Schema::connection($connection)->create('document_embeddings', function (Blueprint $table) {
             $table->uuid('id')->primary();
