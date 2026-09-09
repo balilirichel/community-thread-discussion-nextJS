@@ -116,7 +116,7 @@ return [
             'charset' => env('SUPABASE_DB_CHARSET', 'utf8'),
             'prefix' => '',
             'prefix_indexes' => true,
-            'search_path' => 'public',
+            'search_path' => '$user,public,extensions',
             'sslmode' => env('SUPABASE_DB_SSLMODE', 'require'),
         ],
 
