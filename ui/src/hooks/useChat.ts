@@ -10,6 +10,7 @@ interface StoredSession {
 }
 
 function loadSession(): StoredSession | null {
+  if (typeof window === 'undefined') return null;
   try {
     const raw = localStorage.getItem(SESSION_KEY);
     return raw ? JSON.parse(raw) : null;
@@ -19,10 +20,12 @@ function loadSession(): StoredSession | null {
 }
 
 function saveSession(session: StoredSession): void {
+  if (typeof window === 'undefined') return;
   localStorage.setItem(SESSION_KEY, JSON.stringify(session));
 }
 
 function loadMessages(): ChatMessage[] {
+  if (typeof window === 'undefined') return [];
   try {
     const raw = localStorage.getItem(MESSAGES_KEY);
     return raw ? JSON.parse(raw) : [];
@@ -32,6 +35,7 @@ function loadMessages(): ChatMessage[] {
 }
 
 function saveMessages(messages: ChatMessage[]): void {
+  if (typeof window === 'undefined') return;
   localStorage.setItem(MESSAGES_KEY, JSON.stringify(messages.slice(-50)));
 }
 
@@ -135,8 +139,10 @@ export function useChat() {
   const clearHistory = useCallback(() => {
     setMessages([]);
     sessionRef.current = null;
-    localStorage.removeItem(SESSION_KEY);
-    localStorage.removeItem(MESSAGES_KEY);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(SESSION_KEY);
+      localStorage.removeItem(MESSAGES_KEY);
+    }
   }, []);
 
   return {

@@ -2,7 +2,8 @@ import { useState } from "react";
 import { User, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'react-toastify';
 import CardBanner from "../components/ui/CardBanner";
-import { Link, useNavigate } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { authService } from '../api/authService';
 import { useAppDispatch } from '../store/hooks';
 import { setCredentials } from '../store/slices/authSlice';
@@ -13,7 +14,7 @@ export default function RegisterPage() {
     const [formData, setFormData] = useState({ name: '', email: '', password: '' });
 
 
-    const navigate = useNavigate();
+    const router = useRouter();
     const dispatch = useAppDispatch();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -54,7 +55,7 @@ export default function RegisterPage() {
             toast.success('Your account is ready. Welcome aboard!');
 
             // Redirect to protocol after successful register
-            navigate('/');
+            router.push('/');
         } catch (err) {
             toast.error(getFriendlyRegisterError(err));
             console.error('Registration failed', err);
@@ -167,7 +168,7 @@ export default function RegisterPage() {
                     {/* Alternate Redirection link */}
                     <p className="text-center text-[14px] text-gray-600 mt-8">
                         Already have an account?{' '}
-                        <Link to="/login" className="font-bold text-[#18ac6a] hover:text-[#118451] transition-colors">
+                        <Link href="/login" className="font-bold text-[#18ac6a] hover:text-[#118451] transition-colors">
                             Sign in
                         </Link>
                     </p>

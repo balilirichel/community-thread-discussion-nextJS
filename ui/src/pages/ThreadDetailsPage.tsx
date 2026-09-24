@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import DesktopSidebar from '../components/layout/DesktopSidebar';
 import { ThreadHeader, CommentStream, CommentComposer } from '../components/threads';
 import useRequireAuth from '../hooks/useRequireAuth';
@@ -38,12 +38,10 @@ const ThreadHeaderSkeleton: React.FC = () => (
 
 // ****Thread Page ***********//***───────
 const ThreadDetailsPage: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const router = useRouter();
+  const id = router.query.id as string | undefined;
 
-  // Protocol ID may be passed via navigation state (e.g. from ProtocolDetailPage)
-  const protocolIdFromState = (location.state as { protocolId?: number } | null)?.protocolId;
+  const protocolIdFromState = router.query.protocolId ? Number(router.query.protocolId) : undefined;
 
   const [thread, setThread] = useState<Thread | null>(null);
   const [threadLoading, setThreadLoading] = useState(true);
@@ -210,7 +208,7 @@ const ThreadDetailsPage: React.FC = () => {
 
     try {
       await threadService.delete(protocolIdFromState, id);
-      navigate(-1);
+      router.back();
     } catch {
       // eslint-disable-next-line no-alert
       window.alert('Failed to delete thread. Please try again.');
@@ -257,7 +255,7 @@ const ThreadDetailsPage: React.FC = () => {
             <p className="text-base font-semibold text-gray-900 mb-2">Unable to load thread</p>
             <p className="text-sm text-gray-500 mb-6">{threadError}</p>
             <button
-              onClick={() => navigate(-1)}
+              onClick={() => router.back()}
               className="px-5 py-2.5 rounded-[2rem] bg-[#118451] text-white text-sm font-semibold hover:bg-[#065c38] transition-colors cursor-pointer"
             >
               Go back

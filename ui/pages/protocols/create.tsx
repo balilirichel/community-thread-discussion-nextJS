@@ -1,14 +1,13 @@
-import { type ReactNode, useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import { useAppSelector } from '../store/hooks';
+import { useAppSelector } from '../../src/store/hooks';
+import { useEffect, useState } from 'react';
 
-interface ProtectedRouteProps {
-  children: ReactNode;
-}
+const CreateProtocolPage = dynamic(() => import('../../src/pages/CreateProtocolPage'), { ssr: false });
 
-export function ProtectedRoute({ children }: ProtectedRouteProps) {
+export default function CreateProtocolPageWrapper() {
   const router = useRouter();
-  const { isAuthenticated, isLoadingUser } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, isLoadingUser } = useAppSelector((s) => s.auth);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => { setMounted(true); }, []);
@@ -23,7 +22,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#118451] mx-auto mb-4"></div>
           <p className="text-gray-600">Loading...</p>
         </div>
       </div>
@@ -32,5 +31,5 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   if (!isAuthenticated) return null;
 
-  return <>{children}</>;
+  return <CreateProtocolPage />;
 }

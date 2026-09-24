@@ -4,7 +4,7 @@ import { Provider } from 'react-redux'
 import { store } from './store'
 import './index.css'
 import 'react-toastify/dist/ReactToastify.css'
-import App from './App.tsx'
+import App from './App'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

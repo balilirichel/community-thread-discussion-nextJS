@@ -42,7 +42,7 @@ import {
   AlertTriangle,
   RotateCcw,
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import BottomNav from '../components/layout/BottomNav';
 import DesktopSidebar from '../components/layout/DesktopSidebar';
 import { SearchBar, CategoryPill } from '../components/ui';
@@ -87,7 +87,7 @@ const slugify = (value: string) =>
  * sortOption 'Newest' → sort_by: 'created_at:desc'
  */
 const ThreadPreviewRail: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const { threadHits, isLoading: threadsLoading } = useThreadSearch({
     query: '',           // empty → Typesense match-all ('*') internally
@@ -111,7 +111,7 @@ const ThreadPreviewRail: React.FC = () => {
         threadHits.map((thread) => (
           <button
             key={thread.id}
-            onClick={() => navigate(`/threads/${thread.id}`, { state: { protocolId: Number(thread.protocol_id) } })}
+            onClick={() => router.push(`/threads/${thread.id}?protocolId=${thread.protocol_id}`)}
             className="text-left group cursor-pointer"
             id={`thread-preview-${thread.id}`}
           >
@@ -162,7 +162,7 @@ const SearchErrorBanner: React.FC<SearchErrorBannerProps> = ({ message, onRetry 
 // ─── Discovery Page ********************──
 
 const HomePage: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   // ── UI state ********************────
   const [query, setQuery] = useState('');
@@ -503,7 +503,7 @@ const HomePage: React.FC = () => {
       {/* Mobile FAB */}
       <button
         id="fab-create-protocol"
-        onClick={() => navigate('/protocols/create')}
+        onClick={() => router.push('/protocols/create')}
         aria-label="Create new protocol"
         className="fixed bottom-20 right-4 z-40 rounded-full bg-[#118451] text-white shadow-lg hover:bg-[#065c38] active:scale-95 transition-all duration-150 flex items-center justify-center lg:hidden cursor-pointer"
         style={{ width: '52px', height: '52px' }}

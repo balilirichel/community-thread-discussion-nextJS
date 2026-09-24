@@ -1,10 +1,10 @@
 import { ShieldCheck, MessageSquareCode, Home } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 export default function CardBanner() {
     return (
         <Link
-            to="/"
+            href="/"
             title="Back to Home"
             className="group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#118451]/40 rounded-xl"
         >

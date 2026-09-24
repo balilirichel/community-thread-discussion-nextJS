@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import {
   ChevronLeft,
   Star,
@@ -111,8 +111,8 @@ type ActiveTab = 'overview' | 'reviews' | 'threads';
 
 // ****Protocol Detail Page ***********//
 const ProtocolDetailPage: React.FC = () => {
-  const { slug } = useParams<{ slug: string }>();
-  const navigate = useNavigate();
+  const router = useRouter();
+  const slug = router.query.slug as string | undefined;
 
   // ── Auth ──
   const currentUserId = useAppSelector((s) => s.auth.user?.id ?? null);
@@ -218,7 +218,7 @@ const ProtocolDetailPage: React.FC = () => {
     if (!protocol) return;
     await protocolService.delete(protocol.id);
     // Redirect to home page after successful deletion
-    navigate('/', { replace: true });
+    router.replace('/');
   };
 
   // ── Loading / Error screens ───────────────────────────────────────────────
@@ -235,7 +235,7 @@ const ProtocolDetailPage: React.FC = () => {
             <p className="text-sm text-gray-500 mb-6">
               {pageError ?? 'The protocol may not exist or the server could not be reached.'}
             </p>
-            <Button variant="primary" onClick={() => navigate(-1)}>
+            <Button variant="primary" onClick={() => router.back()}>
               Go back
             </Button>
           </div>
@@ -272,7 +272,7 @@ const ProtocolDetailPage: React.FC = () => {
             {/* Top nav */}
             <div className="relative z-10 flex items-center justify-between px-4 pt-5 pb-2">
               <button
-                onClick={() => navigate(-1)}
+                onClick={() => router.back()}
                 className="flex items-center gap-1.5 text-white/90 hover:text-white transition-colors"
                 aria-label="Go back"
               >
@@ -550,7 +550,7 @@ const ProtocolDetailPage: React.FC = () => {
         return (
           <button
             key={thread.id}
-            onClick={() => navigate(`/threads/${thread.id}`, { state: { protocolId: protocol.id } })}
+            onClick={() => router.push(`/threads/${thread.id}?protocolId=${protocol.id}`)}
             className="w-full text-left bg-white rounded-2xl border border-gray-100 p-4 
                        hover:border-transparent hover:shadow-[0_8px_20px_-6px_rgba(17,132,81,0.12)] 
                        hover:-translate-y-0.5 transition-all duration-200 ease-out group relative block"

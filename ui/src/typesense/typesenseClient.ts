@@ -19,10 +19,10 @@ import Typesense from 'typesense';
 
 // ─── Read environment variables ───────────────────────────────────────────────
 // Fallbacks are provided so the app degrades gracefully in misconfigured envs.
-const TYPESENSE_HOST = import.meta.env.VITE_TYPESENSE_HOST ?? '127.0.0.1';
-const TYPESENSE_PORT = Number(import.meta.env.VITE_TYPESENSE_PORT ?? 8108);
-const TYPESENSE_PROTOCOL = import.meta.env.VITE_TYPESENSE_PROTOCOL ?? 'http';
-const TYPESENSE_API_KEY = import.meta.env.VITE_TYPESENSE_API_KEY ?? '';
+const TYPESENSE_HOST = process.env.NEXT_PUBLIC_TYPESENSE_HOST ?? '127.0.0.1';
+const TYPESENSE_PORT = Number(process.env.NEXT_PUBLIC_TYPESENSE_PORT ?? 8108);
+const TYPESENSE_PROTOCOL = process.env.NEXT_PUBLIC_TYPESENSE_PROTOCOL ?? 'http';
+const TYPESENSE_API_KEY = process.env.NEXT_PUBLIC_TYPESENSE_API_KEY ?? '';
 
 if (!TYPESENSE_API_KEY) {
   console.warn(

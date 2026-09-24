@@ -10,12 +10,18 @@ interface AuthState {
 
 const TOKEN_KEY = 'auth_token';
 
+function getInitialToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+const initialToken = getInitialToken();
+
 const initialState: AuthState = {
   user: null,
-  // Rehydrate token from localStorage on cold start
-  token: localStorage.getItem(TOKEN_KEY),
-  isAuthenticated: !!localStorage.getItem(TOKEN_KEY),
-  isLoadingUser: !!localStorage.getItem(TOKEN_KEY),
+  token: initialToken,
+  isAuthenticated: !!initialToken,
+  isLoadingUser: !!initialToken,
 };
 
 const authSlice = createSlice({
@@ -26,7 +32,9 @@ const authSlice = createSlice({
       state.user = action.payload.user;
       state.token = action.payload.token;
       state.isAuthenticated = true;
-      localStorage.setItem(TOKEN_KEY, action.payload.token);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(TOKEN_KEY, action.payload.token);
+      }
     },
     setUser: (state, action: PayloadAction<User>) => {
       state.user = action.payload;
@@ -40,7 +48,9 @@ const authSlice = createSlice({
       state.token = null;
       state.isAuthenticated = false;
       state.isLoadingUser = false;
-      localStorage.removeItem(TOKEN_KEY);
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem(TOKEN_KEY);
+      }
     },
   },
 });

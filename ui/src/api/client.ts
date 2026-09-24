@@ -2,11 +2,11 @@ import axios, { AxiosError } from 'axios';
 import type { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import { store } from '../store';
 import { clearAuth } from '../store/slices/authSlice';
-import { setGlobalError } from '../store/slices/uiSlice.ts';
+import { setGlobalError } from '../store/slices/uiSlice';
 import type { ApiError } from '../types/api';
 
 const apiClient: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000',
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8000',
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import {
   Home,
   User,
@@ -17,8 +17,7 @@ const navItems = [
 ];
 
 const DesktopSidebar: React.FC = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
 
   return (
@@ -46,12 +45,12 @@ const DesktopSidebar: React.FC = () => {
       <nav className="flex-1 py-4 overflow-y-auto">
         {navItems.map(({ id, label, icon: Icon, path }) => {
           const isActive =
-            path === '/' ? location.pathname === '/' : location.pathname.startsWith(path);
+            path === '/' ? router.pathname === '/' : router.pathname.startsWith(path);
           return (
             <button
               key={id}
               id={`sidebar-nav-${id}`}
-              onClick={() => navigate(path)}
+              onClick={() => router.push(path)}
               aria-label={label}
               aria-current={isActive ? 'page' : undefined}
               title={collapsed ? label : undefined}
@@ -74,7 +73,7 @@ const DesktopSidebar: React.FC = () => {
       <div className="px-3 pb-3">
         <button
           id="sidebar-new-protocol"
-          onClick={() => navigate('/protocols/create')}
+          onClick={() => router.push('/protocols/create')}
           aria-label="Create new protocol"
           title={collapsed ? 'New Protocol' : undefined}
           className={[

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import {  Star, BookOpen } from 'lucide-react';
 import Avatar from '../ui/Avatar';
 
@@ -42,13 +42,13 @@ const ProtocolCard: React.FC<ProtocolCardProps> = ({
   gradientIndex = 0,
   slug,
 }) => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const gradient = gradients[gradientIndex % gradients.length];
 
   return (
     <article
       id={`protocol-card-${id}`}
-      onClick={() => navigate(`/protocols/${slug}`)}
+      onClick={() => router.push(`/protocols/${slug}`)}
       className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer overflow-hidden group"
     >
       {/* Gradient Hero Header */}

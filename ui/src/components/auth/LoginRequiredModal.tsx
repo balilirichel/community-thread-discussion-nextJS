@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import Button from '../ui/Button';
 
 interface Props {
@@ -8,14 +8,13 @@ interface Props {
 }
 
 const LoginRequiredModal: React.FC<Props> = ({ isOpen, onClose }) => {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const router = useRouter();
 
   if (!isOpen) return null;
 
   const handleLogin = () => {
     // preserve current location so user can be returned after login
-    navigate('/login', { state: { from: location }, replace: false });
+    router.push('/login');
   };
 
   return (

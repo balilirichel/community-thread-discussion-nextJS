@@ -1,24 +1,27 @@
-import { type ReactNode } from 'react';
-import { Navigate } from 'react-router-dom';
+import { type ReactNode, useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import { useAppSelector } from '../store/hooks';
 
 interface PublicRouteProps {
   children: ReactNode;
 }
 
-/**
- * PublicRoute
- *
- * Wraps public routes (login, register).
- * - If already authenticated, redirects to home
- * - If not authenticated, renders the children
- */
 export function PublicRoute({ children }: PublicRouteProps) {
+  const router = useRouter();
   const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const [mounted, setMounted] = useState(false);
 
-  if (isAuthenticated) {
-    return <Navigate to="/" replace />;
-  }
+  useEffect(() => { setMounted(true); }, []);
+
+  useEffect(() => {
+    if (mounted && isAuthenticated) {
+      router.replace('/');
+    }
+  }, [mounted, isAuthenticated, router]);
+
+  if (!mounted) return null;
+
+  if (isAuthenticated) return null;
 
   return <>{children}</>;
 }

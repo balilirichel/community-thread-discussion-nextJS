@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
 import { useAppDispatch } from '../store/hooks';
 import { authService } from '../api/authService';
@@ -8,14 +8,14 @@ import { setCredentials } from '../store/slices/authSlice';
 import BrandCheckbox from "../components/ui/BrandCheckbox";
 import CardBanner from "../components/ui/CardBanner";
 import Button from '../components/ui/Button';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(true);
     const [formData, setFormData] = useState({ email: '', password: '' });
 
-    const navigate = useNavigate();
+    const router = useRouter();
     const dispatch = useAppDispatch();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -53,7 +53,7 @@ export default function LoginPage() {
             toast.success('Signed in successfully. Welcome back!');
 
             // Redirect to home after successful login
-            navigate('/');
+            router.push('/');
         } catch (err) {
             toast.error(getFriendlyLoginError(err));
             console.error('Login failed', err);
@@ -161,7 +161,7 @@ export default function LoginPage() {
                     {/* Alternate Redirection link */}
                     <p className="text-center text-[14px] text-gray-600 mt-8">
                         Don't have an account?{' '}
-                        <Link to="/register" className="font-bold text-[#18ac6a] hover:text-[#118451] transition-colors">
+                        <Link href="/register" className="font-bold text-[#18ac6a] hover:text-[#118451] transition-colors">
                             Sign up
                         </Link>
                     </p>

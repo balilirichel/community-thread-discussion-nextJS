@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import { MessageSquare } from 'lucide-react';
 import VoteController from '../ui/VoteController';
 import useRequireAuth from '../../hooks/useRequireAuth';
@@ -32,12 +32,12 @@ const formatRelativeDate = (value: string) => {
 };
 
 const ThreadCard: React.FC<ThreadCardProps> = ({ thread, protocolId, compact = false, canManage = false, onEdit, onDelete }) => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const authorName = thread.user?.name ?? thread.author?.name ?? 'Unknown';
 
   const handleNavigate = () => {
     if (protocolId == null) return;
-    navigate(`/threads/${thread.id}`, { state: { protocolId } });
+    router.push(`/threads/${thread.id}?protocolId=${protocolId}`);
   };
 
   const upvotes = thread.upvotes_count ?? 0;

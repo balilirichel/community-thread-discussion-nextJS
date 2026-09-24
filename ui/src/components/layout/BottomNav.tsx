@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import { Home, User, MessagesSquare } from 'lucide-react';
 
 const navItems = [
@@ -9,8 +9,7 @@ const navItems = [
 ];
 
 const BottomNav: React.FC = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const router = useRouter();
 
   return (
     <nav
@@ -26,13 +25,13 @@ const BottomNav: React.FC = () => {
       <div className="flex items-center justify-around h-[66px] max-w-xl mx-auto px-4">
         {navItems.map(({ id, label, icon: Icon, path }) => {
           const isActive =
-            path === '/' ? location.pathname === '/' : location.pathname.startsWith(path);
+            path === '/' ? router.pathname === '/' : router.pathname.startsWith(path);
           
           return (
             <button
               key={id}
               id={`bottom-nav-${id}`}
-              onClick={() => navigate(path)}
+              onClick={() => router.push(path)}
               aria-label={label}
               aria-current={isActive ? 'page' : undefined}
               className={[

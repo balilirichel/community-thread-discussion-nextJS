@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import { ChevronLeft, MessageSquare, Edit2, Trash2 } from 'lucide-react';
 import Avatar from '../ui/Avatar';
 import Button from '../ui/Button';
@@ -36,7 +36,7 @@ const formatRelativeDate = (value: string): string => {
 };
 
 const ThreadHeader: React.FC<ThreadHeaderProps> = ({ thread, canManage = false, onEdit, onDelete }) => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const upvotes = thread.upvotes_count ?? 0;
   const downvotes = thread.downvotes_count ?? 0;
@@ -54,7 +54,7 @@ const ThreadHeader: React.FC<ThreadHeaderProps> = ({ thread, canManage = false, 
 
   const handleProtocolNavigate = () => {
     if (thread.protocol?.id) {
-      navigate(`/protocols/${thread.protocol.id}`);
+      router.push(`/protocols/${thread.protocol.id}`);
     }
   };
 
@@ -76,7 +76,7 @@ const ThreadHeader: React.FC<ThreadHeaderProps> = ({ thread, canManage = false, 
         <div className="flex items-center gap-2 overflow-hidden">
           <button
             id="thread-back-btn"
-            onClick={() => navigate(-1)}
+            onClick={() => router.back()}
             aria-label="Go back"
             className="flex items-center gap-1 text-gray-500 hover:text-[#118451] cursor-pointer transition-colors flex-shrink-0"
           >
@@ -85,7 +85,7 @@ const ThreadHeader: React.FC<ThreadHeaderProps> = ({ thread, canManage = false, 
 
           <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-xs text-gray-400 overflow-hidden">
             <button
-              onClick={() => navigate('/')}
+              onClick={() => router.push('/')}
               className="hover:text-[#118451] cursor-pointer truncate flex-shrink-0 transition-colors"
             >
               Protocol

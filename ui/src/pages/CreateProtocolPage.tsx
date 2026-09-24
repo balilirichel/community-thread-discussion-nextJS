@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import DesktopSidebar from '../components/layout/DesktopSidebar';
 import BottomNav from '../components/layout/BottomNav';
 import ProtocolFormHeader from '../components/protocol/create/ProtocolFormHeader';
@@ -87,10 +87,10 @@ const TipsPanel: React.FC = () => (
 
 // ****Create Protocol Page ***********//
 const CreateProtocolPage: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [createdProtocol, setCreatedProtocol] = useState<Protocol | null>(null);
 
-  const handleBack = useCallback(() => navigate(-1), [navigate]);
+  const handleBack = useCallback(() => router.back(), [router]);
 
   const handleSuccess = useCallback((protocol: Protocol) => {
     setCreatedProtocol(protocol);
@@ -100,8 +100,8 @@ const CreateProtocolPage: React.FC = () => {
 
   const handleViewProtocol = useCallback(() => {
     if (!createdProtocol) return;
-    navigate(`/protocols/${slugify(createdProtocol.title)}`);
-  }, [createdProtocol, navigate]);
+    router.push(`/protocols/${slugify(createdProtocol.title)}`);
+  }, [createdProtocol, router]);
 
   const handleCreateAnother = useCallback(() => {
     setCreatedProtocol(null);
